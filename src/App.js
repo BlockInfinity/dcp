@@ -2,10 +2,13 @@ import React, { Component } from 'react'
 import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
 import getWeb3 from './utils/getWeb3'
 
-import './css/oswald.css'
-import './css/open-sans.css'
-import './css/pure-min.css'
-import './App.css'
+import { Route, Switch } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+
+import Invest from "./components/Invest.js";
+import NewProject from "./components/NewProject.js";
+import Redeem from "./components/Redeem.js";
+import VoteProject from "./components/VoteProject.js";
 
 class App extends Component {
   constructor(props) {
@@ -13,7 +16,16 @@ class App extends Component {
 
     this.state = {
       storageValue: 0,
-      web3: null
+      web3: null,
+      projects: [],
+      users: [{
+        name: 'User 1', grants: 'admin'
+      }, {
+        name: 'User 2', grants: 'admin'
+      }, {
+        name: 'User 3', grants: 'regular'
+      }],
+      user: null
     }
   }
 
@@ -67,25 +79,60 @@ class App extends Component {
     })
   }
 
+  selectUser(_user) {
+    this.setState({
+      user: _user
+    })
+  }
+
   render() {
     return (
-      <div className="App">
-        <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
-        </nav>
+      <div>
+        <div className="row">
+          <div className="col-12"> 
+            <nav className="navbar navbar-toggleable-md navbar-light bg-faded">
+              <div className="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul className="navbar-nav">
+                  <li className="nav-item active">
+                    <a className="nav-link" href="#">Balance: 0<span className="sr-only">(current)</span></a>
+                  </li>
+                  <li className="nav-item dropdown" style={{'margin-left': 'auto', 'margin-right': 0}}>
+                    <a className="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Select User
+                    </a>
+                    <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      {this.state.users.map((user) => {
+                        return (<a key={user.name} className="dropdown-item" href="#" onClick={() => this.selectUser(user)}>{user.name}</a>)
+                      })}
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+          </div>
+        </div>
 
-        <main className="container">
-          <div className="pure-g">
-            <div className="pure-u-1-1">
-              <h1>Good to Go!</h1>
-              <p>Your Truffle Box is installed and ready.</p>
-              <h2>Smart Contract Example</h2>
-              <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
-              <p>Try changing the value stored on <strong>line 59</strong> of App.js.</p>
-              <p>The stored value is: {this.state.storageValue}</p>
+        <div className="row mx-3 my-3">
+          <div className="col-3"> 
+            <div className="row w-100">
+              <ul className="list-group w-100">
+                <li className="list-group-item w-100"><Link to='/Invest'>Invest</Link></li>
+                <li className="list-group-item w-100"><Link to='/NewProject'>New Project</Link></li>
+                <li className="list-group-item w-100"><Link to='/VoteProject'>Vote Project</Link></li>
+                <li className="list-group-item w-100"><Link to='/Redeem'>Reedem</Link></li>
+              </ul>
             </div>
           </div>
-        </main>
+
+          <div className="col-9">
+            <Switch>
+              <Route exact path='/Invest' render={ props => <Invest/> } />
+              <Route exact path='/NewProject' render={ props => <NewProject props/> } />
+              <Route exact path='/VoteProject' render={ props => <VoteProject/> } />
+              <Route exact path='/Redeem' render={ props => <Redeem/> } />
+            </Switch>
+          </div>
+        </div>
       </div>
     );
   }
